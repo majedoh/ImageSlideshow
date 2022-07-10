@@ -30,7 +30,7 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
     open var zoomInInitially = false
 
     /// Maximum zoom scale
-    open var maximumScale: CGFloat = 2.0
+    open var maximumScale: CGFloat = 4.0
 
     fileprivate var lastFrame = CGRect.zero
     fileprivate var imageReleased = false
@@ -53,7 +53,7 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
         - parameter image: Input Source to load the image
         - parameter zoomEnabled: holds if it should be possible to zoom-in the image
     */
-    init(image: InputSource, zoomEnabled: Bool, activityIndicator: ActivityIndicatorView? = nil, maximumScale: CGFloat = 2.0) {
+    init(image: InputSource, zoomEnabled: Bool, activityIndicator: ActivityIndicatorView? = nil, maximumScale: CGFloat = 4.0) {
         self.zoomEnabled = zoomEnabled
         self.image = image
         self.activityIndicator = activityIndicator
