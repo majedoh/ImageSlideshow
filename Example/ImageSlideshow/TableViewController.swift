@@ -18,7 +18,7 @@ struct Model {
     }
 }
 
-class TableViewController: UITableViewController {
+class TableViewController: UITableViewController , FullScreenSlideshowDelegate{
 
     let models = [Model(image: UIImage(named: "img1")!, title: "First image"), Model(image: UIImage(named: "img2")!, title: "Second image"), Model(image: UIImage(named: "img3")!, title: "Third image"), Model(image: UIImage(named: "img4")!, title: "Fourth image")]
 
@@ -61,7 +61,14 @@ class TableViewController: UITableViewController {
                 self?.slideshowTransitioningDelegate?.referenceImageView = imageView
             }
         }
+        
+        fullScreenController.presentEdit = true
+        fullScreenController.delegate = self
 
         present(fullScreenController, animated: true, completion: nil)
+    }
+    
+    func didPressEdit(currentImage : Int){
+        print(currentImage)
     }
 }

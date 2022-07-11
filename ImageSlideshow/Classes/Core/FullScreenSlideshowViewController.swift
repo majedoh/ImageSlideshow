@@ -7,8 +7,38 @@
 
 import UIKit
 
+public protocol FullScreenSlideshowDelegate:AnyObject{
+    func didPressEdit(currentImage : Int)
+}
+
+
 @objcMembers
 open class FullScreenSlideshowViewController: UIViewController {
+    
+    public weak var delegate : FullScreenSlideshowDelegate?
+    public var presentEdit : Bool = false
+    
+    var messageLable : UILabel = {
+        let lab = UILabel()
+        lab.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        lab.textColor = .white
+        lab.textAlignment = .center
+        lab.numberOfLines = 0
+        lab.text = "Edit"
+        lab.layer.masksToBounds = false
+        lab.layer.shadowColor = UIColor.black.cgColor
+        lab.layer.shadowOpacity = 0.4
+        lab.layer.shadowOffset = CGSize(width: 0, height: 0)
+        lab.layer.shadowRadius = 1
+        return lab
+    }()
+    
+    var Holderview : UIControl = {
+        let _view = UIControl()
+        _view.backgroundColor = .clear
+        return _view
+    }()
+    
     
     let generator = UIImpactFeedbackGenerator(style: .soft)
     var height : NSLayoutConstraint!
@@ -108,6 +138,12 @@ open class FullScreenSlideshowViewController: UIViewController {
 
         view.addSubview(slideshow)
 
+        closeButton.layer.masksToBounds = false
+        closeButton.layer.shadowColor = UIColor.black.cgColor
+        closeButton.layer.shadowOpacity = 0.4
+        closeButton.layer.shadowOffset = CGSize(width: 0, height: 0)
+        closeButton.layer.shadowRadius = 1
+        
         // close button configuration
         closeButton.setImage(UIImage(named: "ic_cross_white", in: .module, compatibleWith: nil), for: UIControlState())
         closeButton.addTarget(self, action: #selector(FullScreenSlideshowViewController.close), for: UIControlEvents.touchUpInside)
@@ -124,17 +160,17 @@ open class FullScreenSlideshowViewController: UIViewController {
         Downlaod_Control.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             Downlaod_Control.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            Downlaod_Control.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            Downlaod_Control.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             Downlaod_Control.heightAnchor.constraint(equalToConstant: 35),
             Downlaod_Control.widthAnchor.constraint(equalToConstant: 35)
         ])
         
         Download_image.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            Download_image.topAnchor.constraint(equalTo: Downlaod_Control.topAnchor, constant: 6),
-            Download_image.bottomAnchor.constraint(equalTo: Downlaod_Control.bottomAnchor, constant: -6),
-            Download_image.leadingAnchor.constraint(equalTo: Downlaod_Control.leadingAnchor, constant: 6),
-            Download_image.trailingAnchor.constraint(equalTo: Downlaod_Control.trailingAnchor, constant: -6),
+            Download_image.topAnchor.constraint(equalTo: Downlaod_Control.topAnchor, constant: 8),
+            Download_image.bottomAnchor.constraint(equalTo: Downlaod_Control.bottomAnchor, constant: -8),
+            Download_image.leadingAnchor.constraint(equalTo: Downlaod_Control.leadingAnchor, constant: 8),
+            Download_image.trailingAnchor.constraint(equalTo: Downlaod_Control.trailingAnchor, constant: -8),
         ])
         
         Downlaod_Control.addTarget(self, action: #selector(saveImage), for: .touchDown)
@@ -150,6 +186,31 @@ open class FullScreenSlideshowViewController: UIViewController {
         height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
         height.isActive = true
         
+        
+        if presentEdit {
+            view.addSubview(Holderview)
+            Holderview.addSubview(messageLable)
+            Holderview.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                Holderview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+                Holderview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+                Holderview.widthAnchor.constraint(equalToConstant: 50),
+                Holderview.heightAnchor.constraint(equalToConstant: 30),
+            ])
+            messageLable.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                messageLable.topAnchor.constraint(equalTo: Holderview.topAnchor, constant: 4),
+                messageLable.bottomAnchor.constraint(equalTo: Holderview.bottomAnchor, constant: -4),
+                messageLable.leadingAnchor.constraint(equalTo: Holderview.leadingAnchor, constant: 4),
+                messageLable.trailingAnchor.constraint(equalTo: Holderview.trailingAnchor, constant: -4),
+            ])
+            Holderview.addTarget(self, action: #selector(didPressEdits), for: .touchDown)
+        }
+        
+    }
+    
+    @objc func didPressEdits(){
+        delegate?.didPressEdit(currentImage: slideshow.currentPage)
     }
     
     @objc func saveImage(){
