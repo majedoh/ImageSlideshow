@@ -179,7 +179,7 @@ open class FullScreenSlideshowViewController: UIViewController {
         dismissStatus()
 
         height.isActive = false
-        height = saveStatus.heightAnchor.constraint(equalToConstant: 50)
+        height = saveStatus.heightAnchor.constraint(equalToConstant: 40)
         
         UIView.animate(withDuration: 0.4, animations: { [self] in
             height.isActive = true
