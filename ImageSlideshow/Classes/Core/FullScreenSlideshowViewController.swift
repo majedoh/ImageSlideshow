@@ -11,7 +11,7 @@ import UIKit
 open class FullScreenSlideshowViewController: UIViewController {
     
     let generator = UIImpactFeedbackGenerator(style: .soft)
-    
+    var height : NSLayoutConstraint!
     var Downlaod_Control: UIControl = {
         let _view = UIControl()
         _view.backgroundColor = .clear
@@ -40,7 +40,7 @@ open class FullScreenSlideshowViewController: UIViewController {
         lab.textColor = #colorLiteral(red: 1, green: 1, blue: 0.9999999404, alpha: 1)
         lab.textAlignment = .center
         lab.alpha = 0.8
-        lab.layer.cornerRadius = 8
+        lab.layer.cornerRadius = 4
         lab.clipsToBounds = true
         return lab
     }()
@@ -140,9 +140,15 @@ open class FullScreenSlideshowViewController: UIViewController {
         Downlaod_Control.addTarget(self, action: #selector(saveImage), for: .touchDown)
         
         
-
-        
-        
+        view.addSubview(saveStatus)
+        saveStatus.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            saveStatus.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+        ])
+        height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
+        height.isActive = true
         
     }
     
@@ -171,21 +177,25 @@ open class FullScreenSlideshowViewController: UIViewController {
     
     func presnetStatues(){
         dismissStatus()
-        view.addSubview(saveStatus)
-        saveStatus.translatesAutoresizingMaskIntoConstraints = false
+
+        height.isActive = false
+        height = saveStatus.heightAnchor.constraint(equalToConstant: 50)
+        
         UIView.animate(withDuration: 0.4, animations: { [self] in
-            NSLayoutConstraint.activate([
-                saveStatus.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-                saveStatus.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0),
-                saveStatus.heightAnchor.constraint(equalToConstant: 35),
-                saveStatus.widthAnchor.constraint(equalToConstant: 200),
-            ])
+            height.isActive = true
+            view.layoutIfNeeded()
         })
     }
     
     func dismissStatus(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1500), execute: { [self] in
-            saveStatus.removeFromSuperview()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000), execute: { [self] in
+            height.isActive = false
+            height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
+            UIView.animate(withDuration: 0.4, animations: { [self] in
+                height.isActive = true
+                view.layoutIfNeeded()
+            })
+            
         })
     }
 
