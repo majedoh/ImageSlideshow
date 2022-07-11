@@ -17,6 +17,7 @@ open class FullScreenSlideshowViewController: UIViewController {
     
     public weak var delegate : FullScreenSlideshowDelegate?
     public var presentEdit : Bool = false
+    public var presentDownlaod : Bool = false
     
     var messageLable : UILabel = {
         let lab = UILabel()
@@ -59,6 +60,11 @@ open class FullScreenSlideshowViewController: UIViewController {
         _ImageView.contentMode =  .scaleAspectFill
         _ImageView.backgroundColor = .clear
         _ImageView.clipsToBounds = true
+        _ImageView.layer.masksToBounds = false
+        _ImageView.layer.shadowColor = UIColor.black.cgColor
+        _ImageView.layer.shadowOpacity = 0.4
+        _ImageView.layer.shadowOffset = CGSize(width: 0, height: 0)
+        _ImageView.layer.shadowRadius = 1
         return _ImageView
     }()
     
@@ -154,37 +160,41 @@ open class FullScreenSlideshowViewController: UIViewController {
         
         generator.prepare()
         
-        view.addSubview(Downlaod_Control)
-        Downlaod_Control.addSubview(Download_image)
         
-        Downlaod_Control.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            Downlaod_Control.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            Downlaod_Control.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            Downlaod_Control.heightAnchor.constraint(equalToConstant: 35),
-            Downlaod_Control.widthAnchor.constraint(equalToConstant: 35)
-        ])
-        
-        Download_image.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            Download_image.topAnchor.constraint(equalTo: Downlaod_Control.topAnchor, constant: 8),
-            Download_image.bottomAnchor.constraint(equalTo: Downlaod_Control.bottomAnchor, constant: -8),
-            Download_image.leadingAnchor.constraint(equalTo: Downlaod_Control.leadingAnchor, constant: 8),
-            Download_image.trailingAnchor.constraint(equalTo: Downlaod_Control.trailingAnchor, constant: -8),
-        ])
-        
-        Downlaod_Control.addTarget(self, action: #selector(saveImage), for: .touchDown)
-        
-        
-        view.addSubview(saveStatus)
-        saveStatus.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            saveStatus.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
-            saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-        ])
-        height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
-        height.isActive = true
+        if presentDownlaod{
+            view.addSubview(Downlaod_Control)
+            Downlaod_Control.addSubview(Download_image)
+            
+            Downlaod_Control.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                Downlaod_Control.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+                Downlaod_Control.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+                Downlaod_Control.heightAnchor.constraint(equalToConstant: 35),
+                Downlaod_Control.widthAnchor.constraint(equalToConstant: 35)
+            ])
+            
+            Download_image.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                Download_image.topAnchor.constraint(equalTo: Downlaod_Control.topAnchor, constant: 8),
+                Download_image.bottomAnchor.constraint(equalTo: Downlaod_Control.bottomAnchor, constant: -8),
+                Download_image.leadingAnchor.constraint(equalTo: Downlaod_Control.leadingAnchor, constant: 8),
+                Download_image.trailingAnchor.constraint(equalTo: Downlaod_Control.trailingAnchor, constant: -8),
+            ])
+            
+            Downlaod_Control.addTarget(self, action: #selector(saveImage), for: .touchDown)
+            
+            
+            view.addSubview(saveStatus)
+            saveStatus.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                saveStatus.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+                saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+                saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            ])
+            height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
+            height.isActive = true
+        }
+
         
         
         if presentEdit {
