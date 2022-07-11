@@ -23,7 +23,7 @@ Image slideshow is a Swift library providing customizable image slideshow with c
   s.homepage         = "https://github.com/zvonicek/ImageSlideshow"
   s.screenshots     = "https://dzwonsemrish7.cloudfront.net/items/2R06283n040V3P3p0i42/ezgif.com-optimize.gif"
   s.license          = 'MIT'
-  s.author           = { "Majed Hariri" => "majedoh@gmail.com" }
+  s.author           = { "Petr Zvonicek" => "zvonicek@gmail.com" }
   s.source           = { :git => "https://github.com/zvonicek/ImageSlideshow.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/zvonicek'
 
