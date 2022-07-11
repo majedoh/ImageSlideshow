@@ -2,13 +2,50 @@
 //  FullScreenSlideshowViewController.swift
 //  ImageSlideshow
 //
-//  Created by Petr Zvoníček on 31.08.15.
+//  Created by Majed Hariri
 //
 
 import UIKit
 
 @objcMembers
 open class FullScreenSlideshowViewController: UIViewController {
+    
+    let generator = UIImpactFeedbackGenerator(style: .soft)
+    
+    var Downlaod_Control: UIControl = {
+        let _view = UIControl()
+        _view.backgroundColor = .clear
+        _view.layer.cornerRadius = 8
+        _view.alpha = 1
+        _view.clipsToBounds = true
+        _view.layer.borderWidth = 0.4
+        _view.layer.borderColor = UIColor.white.cgColor
+        return _view
+    }()
+    
+    var Download_image: UIImageView = {
+        let _ImageView = UIImageView()
+        _ImageView.image = UIImage(named: "download")
+        _ImageView.contentMode =  .scaleAspectFill
+        _ImageView.backgroundColor = .clear
+        _ImageView.clipsToBounds = true
+        return _ImageView
+    }()
+    
+    var saveStatus : UILabel = {
+        let lab = UILabel()
+        lab.font = UIFont(name: "Dubai-Regular", size: 16)
+        lab.text = "21 April 2022 - 01:50 PM"
+        lab.numberOfLines = 1
+        lab.textColor = #colorLiteral(red: 1, green: 1, blue: 0.9999999404, alpha: 1)
+        lab.textAlignment = .center
+        lab.alpha = 0.8
+        lab.layer.cornerRadius = 8
+        lab.clipsToBounds = true
+        return lab
+    }()
+    
+    
 
     open var slideshow: ImageSlideshow = {
         let slideshow = ImageSlideshow()
@@ -18,11 +55,11 @@ open class FullScreenSlideshowViewController: UIViewController {
         // turns off the timer
         slideshow.slideshowInterval = 0
         slideshow.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight]
-
+        
         return slideshow
     }()
 
-    /// Close button 
+    /// Close button
     open var closeButton = UIButton()
 
     /// Close button frame
@@ -34,7 +71,7 @@ open class FullScreenSlideshowViewController: UIViewController {
     /// Index of initial image
     open var initialPage: Int = 0
 
-    /// Input sources to 
+    /// Input sources to
     open var inputs: [InputSource]?
 
     /// Background color
@@ -75,6 +112,81 @@ open class FullScreenSlideshowViewController: UIViewController {
         closeButton.setImage(UIImage(named: "ic_cross_white", in: .module, compatibleWith: nil), for: UIControlState())
         closeButton.addTarget(self, action: #selector(FullScreenSlideshowViewController.close), for: UIControlEvents.touchUpInside)
         view.addSubview(closeButton)
+        
+        
+        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(onDrage(_:))))
+        
+        generator.prepare()
+        
+        view.addSubview(Downlaod_Control)
+        Downlaod_Control.addSubview(Download_image)
+        
+        Downlaod_Control.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            Downlaod_Control.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            Downlaod_Control.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            Downlaod_Control.heightAnchor.constraint(equalToConstant: 35),
+            Downlaod_Control.widthAnchor.constraint(equalToConstant: 35)
+        ])
+        
+        Download_image.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            Download_image.topAnchor.constraint(equalTo: Downlaod_Control.topAnchor, constant: 6),
+            Download_image.bottomAnchor.constraint(equalTo: Downlaod_Control.bottomAnchor, constant: -6),
+            Download_image.leadingAnchor.constraint(equalTo: Downlaod_Control.leadingAnchor, constant: 6),
+            Download_image.trailingAnchor.constraint(equalTo: Downlaod_Control.trailingAnchor, constant: -6),
+        ])
+        
+        Downlaod_Control.addTarget(self, action: #selector(saveImage), for: .touchDown)
+        
+        
+
+        
+        
+        
+    }
+    
+    @objc func saveImage(){
+        generator.impactOccurred()
+        let imgage = UIImageView()
+        if let inputs = inputs {
+            inputs[slideshow.currentPage].load(to: imgage) { [self] image in
+                guard let i : UIImage = image else {return}
+                UIImageWriteToSavedPhotosAlbum(i, self, #selector(saveError), nil)
+            }
+        }
+    }
+    
+    @objc func saveError(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            saveStatus.text = "Error: \(error)"
+            saveStatus.backgroundColor = #colorLiteral(red: 1, green: 0.3098039216, blue: 0.2666666667, alpha: 0.9)
+            presnetStatues()
+        } else {
+            saveStatus.text = "Saved Successfully"
+            saveStatus.backgroundColor = #colorLiteral(red: 0.2348545492, green: 0.7098160386, blue: 0.4386150837, alpha: 0.9)
+            presnetStatues()
+        }
+    }
+    
+    func presnetStatues(){
+        dismissStatus()
+        view.addSubview(saveStatus)
+        saveStatus.translatesAutoresizingMaskIntoConstraints = false
+        UIView.animate(withDuration: 0.4, animations: { [self] in
+            NSLayoutConstraint.activate([
+                saveStatus.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+                saveStatus.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0),
+                saveStatus.heightAnchor.constraint(equalToConstant: 35),
+                saveStatus.widthAnchor.constraint(equalToConstant: 200),
+            ])
+        })
+    }
+    
+    func dismissStatus(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1500), execute: { [self] in
+            saveStatus.removeFromSuperview()
+        })
     }
 
     override open var prefersStatusBarHidden: Bool {
@@ -122,4 +234,45 @@ open class FullScreenSlideshowViewController: UIViewController {
 
         dismiss(animated: true, completion: nil)
     }
+    
+    
+    //MARK: Swipe to dismiss
+    @objc func onDrage(_ gesture: UIPanGestureRecognizer) {
+        let percent = max(0, gesture.translation(in: view).y) / view.frame.height
+        switch gesture.state {
+        case .began:
+            let tran = gesture.translation(in: view)
+            self.view.frame.origin.y = tran.y
+            self.view.frame.origin.x = 0
+            
+        case .changed:
+            let tran = gesture.translation(in: view)
+            self.view.frame.origin.x = 0
+            if tran.y < 0 {
+                self.view.frame.origin.y = 0
+            }else{
+                self.view.frame.origin.y = tran.y
+            }
+            
+        case .ended:
+            let velocity = gesture.velocity(in: view).y
+            if percent > 0.4 || velocity > 1000 {
+                self.view.endEditing(true)
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.view.frame.origin = CGPoint(x: 0, y: 0)
+                })
+                
+            }
+        case .cancelled, .failed:
+            UIView.animate(withDuration: 0.2, animations: {
+                self.view.frame.origin = CGPoint(x: 0, y: 0)
+            })
+            
+        default:break
+        }
+        
+    }
+    
 }
