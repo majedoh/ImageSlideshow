@@ -62,6 +62,7 @@ class TableViewController: UITableViewController , FullScreenSlideshowDelegate{
             }
         }
         
+        fullScreenController.presentDownlaod = true
         fullScreenController.presentEdit = true
         fullScreenController.delegate = self
 

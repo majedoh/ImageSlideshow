@@ -26,17 +26,15 @@ open class FullScreenSlideshowViewController: UIViewController {
         lab.textAlignment = .center
         lab.numberOfLines = 0
         lab.text = "Edit"
-        lab.layer.masksToBounds = false
-        lab.layer.shadowColor = UIColor.black.cgColor
-        lab.layer.shadowOpacity = 0.4
-        lab.layer.shadowOffset = CGSize(width: 0, height: 0)
-        lab.layer.shadowRadius = 1
+
         return lab
     }()
     
     var Holderview : UIControl = {
         let _view = UIControl()
-        _view.backgroundColor = .clear
+        _view.backgroundColor = #colorLiteral(red: 0.1333333333, green: 0.1176470588, blue: 0.1254901961, alpha: 0.2965904387)
+        _view.layer.cornerRadius = 8
+        _view.clipsToBounds = true
         return _view
     }()
     
@@ -45,7 +43,7 @@ open class FullScreenSlideshowViewController: UIViewController {
     var height : NSLayoutConstraint!
     var Downlaod_Control: UIControl = {
         let _view = UIControl()
-        _view.backgroundColor = .clear
+        _view.backgroundColor = #colorLiteral(red: 0.1333333333, green: 0.1176470588, blue: 0.1254901961, alpha: 0.2965904387)
         _view.layer.cornerRadius = 8
         _view.alpha = 1
         _view.clipsToBounds = true
@@ -71,7 +69,7 @@ open class FullScreenSlideshowViewController: UIViewController {
     var saveStatus : UILabel = {
         let lab = UILabel()
         lab.font = UIFont(name: "Dubai-Regular", size: 16)
-        lab.text = "21 April 2022 - 01:50 PM"
+        lab.text = "Save Succ"
         lab.numberOfLines = 1
         lab.textColor = #colorLiteral(red: 1, green: 1, blue: 0.9999999404, alpha: 1)
         lab.textAlignment = .center
@@ -149,6 +147,11 @@ open class FullScreenSlideshowViewController: UIViewController {
         closeButton.layer.shadowOpacity = 0.4
         closeButton.layer.shadowOffset = CGSize(width: 0, height: 0)
         closeButton.layer.shadowRadius = 1
+        closeButton.backgroundColor = #colorLiteral(red: 0.1333333333, green: 0.1176470588, blue: 0.1254901961, alpha: 0.2965904387)
+        closeButton.layer.cornerRadius = 8
+        closeButton.clipsToBounds = true
+        closeButton.layer.borderWidth = 0.4
+        closeButton.layer.borderColor = UIColor.white.cgColor
         
         // close button configuration
         closeButton.setImage(UIImage(named: "ic_cross_white", in: .module, compatibleWith: nil), for: UIControlState())
@@ -160,63 +163,8 @@ open class FullScreenSlideshowViewController: UIViewController {
         
         generator.prepare()
         
-        
-        if presentDownlaod{
-            view.addSubview(Downlaod_Control)
-            Downlaod_Control.addSubview(Download_image)
-            
-            Downlaod_Control.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                Downlaod_Control.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-                Downlaod_Control.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-                Downlaod_Control.heightAnchor.constraint(equalToConstant: 35),
-                Downlaod_Control.widthAnchor.constraint(equalToConstant: 35)
-            ])
-            
-            Download_image.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                Download_image.topAnchor.constraint(equalTo: Downlaod_Control.topAnchor, constant: 8),
-                Download_image.bottomAnchor.constraint(equalTo: Downlaod_Control.bottomAnchor, constant: -8),
-                Download_image.leadingAnchor.constraint(equalTo: Downlaod_Control.leadingAnchor, constant: 8),
-                Download_image.trailingAnchor.constraint(equalTo: Downlaod_Control.trailingAnchor, constant: -8),
-            ])
-            
-            Downlaod_Control.addTarget(self, action: #selector(saveImage), for: .touchDown)
-            
-            
-            view.addSubview(saveStatus)
-            saveStatus.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                saveStatus.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
-                saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-                saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            ])
-            height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
-            height.isActive = true
-        }
 
-        
-        
-        if presentEdit {
-            view.addSubview(Holderview)
-            Holderview.addSubview(messageLable)
-            Holderview.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                Holderview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-                Holderview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-                Holderview.widthAnchor.constraint(equalToConstant: 50),
-                Holderview.heightAnchor.constraint(equalToConstant: 30),
-            ])
-            messageLable.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                messageLable.topAnchor.constraint(equalTo: Holderview.topAnchor, constant: 4),
-                messageLable.bottomAnchor.constraint(equalTo: Holderview.bottomAnchor, constant: -4),
-                messageLable.leadingAnchor.constraint(equalTo: Holderview.leadingAnchor, constant: 4),
-                messageLable.trailingAnchor.constraint(equalTo: Holderview.trailingAnchor, constant: -4),
-            ])
-            Holderview.addTarget(self, action: #selector(didPressEdits), for: .touchDown)
-        }
-        
+        setupSaveDownloadUI()
     }
     
     @objc func didPressEdits(){
@@ -301,7 +249,8 @@ open class FullScreenSlideshowViewController: UIViewController {
                 safeAreaInsets = UIEdgeInsets.zero
             }
 
-            closeButton.frame = closeButtonFrame ?? CGRect(x: max(10, safeAreaInsets.left), y: max(10, safeAreaInsets.top), width: 40, height: 40)
+            closeButton.frame = closeButtonFrame ?? CGRect(x: max(20, safeAreaInsets.left), y: max(50, safeAreaInsets.top), width: 30, height: 30)
+            setupEditUI()
         }
 
         slideshow.frame = view.frame
@@ -353,6 +302,72 @@ open class FullScreenSlideshowViewController: UIViewController {
             
         default:break
         }
+        
+    }
+    
+}
+
+
+extension FullScreenSlideshowViewController {
+    
+    func setupEditUI(){
+        if presentEdit {
+            view.addSubview(Holderview)
+            Holderview.addSubview(messageLable)
+            Holderview.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                Holderview.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor, constant: 0),
+                Holderview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+                Holderview.widthAnchor.constraint(equalToConstant: 50),
+                Holderview.heightAnchor.constraint(equalToConstant: 30),
+            ])
+            messageLable.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                messageLable.topAnchor.constraint(equalTo: Holderview.topAnchor, constant: 4),
+                messageLable.bottomAnchor.constraint(equalTo: Holderview.bottomAnchor, constant: -4),
+                messageLable.leadingAnchor.constraint(equalTo: Holderview.leadingAnchor, constant: 4),
+                messageLable.trailingAnchor.constraint(equalTo: Holderview.trailingAnchor, constant: -4),
+            ])
+            Holderview.addTarget(self, action: #selector(didPressEdits), for: .touchDown)
+        }
+        
+    }
+    
+    func setupSaveDownloadUI(){
+        if presentDownlaod{
+            view.addSubview(Downlaod_Control)
+            Downlaod_Control.addSubview(Download_image)
+            
+            Downlaod_Control.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                Downlaod_Control.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+                Downlaod_Control.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+                Downlaod_Control.heightAnchor.constraint(equalToConstant: 35),
+                Downlaod_Control.widthAnchor.constraint(equalToConstant: 35)
+            ])
+            
+            Download_image.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                Download_image.topAnchor.constraint(equalTo: Downlaod_Control.topAnchor, constant: 8),
+                Download_image.bottomAnchor.constraint(equalTo: Downlaod_Control.bottomAnchor, constant: -8),
+                Download_image.leadingAnchor.constraint(equalTo: Downlaod_Control.leadingAnchor, constant: 8),
+                Download_image.trailingAnchor.constraint(equalTo: Downlaod_Control.trailingAnchor, constant: -8),
+            ])
+            
+            Downlaod_Control.addTarget(self, action: #selector(saveImage), for: .touchDown)
+            
+            
+            view.addSubview(saveStatus)
+            saveStatus.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                saveStatus.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+                saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+                saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            ])
+            height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
+            height.isActive = true
+        }
+
         
     }
     
